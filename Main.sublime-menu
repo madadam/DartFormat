@@ -14,29 +14,19 @@
     "id": "preferences",
     "children": [
       {
-        "caption": "Package Settings",
-        "mnemonic": "P",
         "id": "package-settings",
         "children": [
           {
             "caption": "DartFormat",
             "children": [
               {
-                "command": "open_file",
-                "args": {
-                  "file": "${packages}/DartFormat/DartFormat.sublime-settings"
-                },
-                "caption": "Settings – Default"
-              },
-              {
-                "command": "open_file",
-                "args": {
-                  "file": "${packages}/User/DartFormat.sublime-settings"
-                },
-                "caption": "Settings - User"
-              },
-              {
-                "caption": "-"
+                "caption": "Settings",
+                "command": "edit_settings",
+                "args":
+                {
+                    "base_file": "${packages}/DartFormat/DartFormat.sublime-settings",
+                    "default": "{\n\t$0\n}\n"
+                }
               }
             ]
           }
