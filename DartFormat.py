@@ -4,8 +4,7 @@ import sublime
 import sublime_plugin
 import subprocess
 
-SETTINGS_FILE = "BeautifyRust.sublime-settings"
-
+SETTINGS_FILE = "DartFormat.sublime-settings"
 
 def which(program):
     def is_exe(fpath):
@@ -18,25 +17,25 @@ def which(program):
         return shutil.which(program)
 
 
-class BeautifyRustOnSave(sublime_plugin.EventListener):
+class DartFormatOnSave(sublime_plugin.EventListener):
 
     def on_post_save(self, view):
         if sublime.load_settings(SETTINGS_FILE).get("run_on_save", False):
-            return view.run_command("beautify_rust")
+            return view.run_command("dart_format")
         return
 
 
-class BeautifyRustCommand(sublime_plugin.TextCommand):
+class DartFormatCommand(sublime_plugin.TextCommand):
 
     def run(self, edit):
         self.filename = self.view.file_name()
         self.fname = os.path.basename(self.filename)
         self.settings = sublime.load_settings(SETTINGS_FILE)
-        if self.is_rust_file():
+        if self.is_dart_file():
             self.run_format(edit)
 
-    def is_rust_file(self):
-        return self.fname.endswith(".rs")
+    def is_dart_file(self):
+        return self.fname.endswith(".dart")
 
     def pipe(self, cmd):
         cwd = os.path.dirname(self.filename)
@@ -44,30 +43,30 @@ class BeautifyRustCommand(sublime_plugin.TextCommand):
         if os.name == 'nt':
             startupinfo = subprocess.STARTUPINFO()
             startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        beautifier = subprocess.Popen(
+        formatter = subprocess.Popen(
             cmd, cwd=cwd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             startupinfo=startupinfo)
-        (_, err) = beautifier.communicate()
-        return (beautifier.wait(), err.decode('utf8'))
+        (_, err) = formatter.communicate()
+        return (formatter.wait(), err.decode('utf8'))
 
     def run_format(self, edit):
         buffer_region = sublime.Region(0, self.view.size())
         buffer_text = self.view.substr(buffer_region)
         if buffer_text == "":
             return
-        rustfmt_bin = which(self.settings.get("rustfmt", "rustfmt"))
-        if rustfmt_bin is None:
+        dart_bin = which(self.settings.get("dart", "dart"))
+        if dart_bin is None:
             return sublime.error_message(
-                "Beautify rust: can not find {0} in path.".format(self.settings.get("rustfmt", "rustfmt")))
-        cmd_list = [rustfmt_bin, self.filename] + self.settings.get("args", [])
+                "DartFormat: can not find {0} in path.".format(self.settings.get("dart", "dart")))
+        cmd_list = [dart_bin, "format"] + self.settings.get("args", []) + [self.filename]
         self.save_viewport_state()
         (exit_code, err) = self.pipe(cmd_list)
-        if exit_code != 0 or (err != "" and not err.startswith("Using rustfmt")):
+
+        if exit_code != 0:
             self.view.replace(edit, buffer_region, buffer_text)
             print("failed: exit_code: {0}\n{1}".format(exit_code, err))
-            if sublime.load_settings(SETTINGS_FILE).get("show_errors", True):
-                sublime.error_message(
-                    "Beautify rust: rustfmt process call failed. See log (ctrl + `) for details.")
+            sublime.error_message("DartFormat: dart process call failed. See log (ctrl + `) for details.")
+
         self.view.window().run_command("reload_all_files")
         self.reset_viewport_state()
 

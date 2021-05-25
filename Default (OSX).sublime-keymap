@@ -1,8 +1,0 @@
-[
-  {
-    "keys": [
-      "ctrl+super+r"
-    ],
-    "command": "beautify_rust"
-  }
-]

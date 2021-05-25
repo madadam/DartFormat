@@ -1,29 +1,26 @@
-# BeautifyRust
+# DartFormat
 
-A binding for Sublime Text to the [Rustfmt](https://github.com/rust-lang-nursery/rustfmt).
+Format dart source code using `dart format`.
 
+### Configuration
 
-### Requirements
-
-1. Clone and build the [rustfmt](https://github.com/rust-lang-nursery/rustfmt)
-2. Install the package through package control (or clone from git if you prefer): https://sublime.wbond.net/packages/BeautifyRust
-3. If an error is encountered while processing the file or can not find `rustfmt` in path, following message `Beautify rust: can not find rustfmt in path.` is displayed. Open menu in your `Preferences -> Package settings -> BeautifyRust -> Settings - User`, and edit the settings file using below as a template:
+Open `Preferences -> Package settings -> DartFormat -> Settings - User`, and edit the settings file using below as a template:
 
 ```
 {
   "run_on_save": false,
-  "show_errors": true,
-  "rustfmt": "/Users/user/.cargo/bin/rustfmt"
-
-  // Optionally, you may specify an array of arguments to pass to rustfmt
-  // For example, if you have a system wide rustfmt configuration file
-  // "args": [
-  //     "--config-path=/Users/user/.rust/"
-  // ]
+  "dart": "/home/user/bin/dart"
+  "args": [
+    "--line-length 100"
+  ]
 }
 ```
 
-Contact
-=======
+- `run_on_save` - whether to run `dart format` automatically on save. Default is `false`.
+- `dart` - path to the dart binary. Default is `"dart"`
+- `args` - additional arguments to `dart format`. Default is none.
 
-https://github.com/vincenting/BeautifyRust
+### Acknowledgement
+
+This plugin is based on [BeautifyRust](https://github.com/vincenting/BeautifyRust).
+

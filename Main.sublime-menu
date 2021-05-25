@@ -6,7 +6,7 @@
         "id": "wrap"
       },
       {
-        "command": "beautify_rust"
+        "command": "dart_format"
       }
     ]
   },
@@ -19,69 +19,21 @@
         "id": "package-settings",
         "children": [
           {
-            "caption": "BeautifyRust",
+            "caption": "DartFormat",
             "children": [
               {
                 "command": "open_file",
                 "args": {
-                  "file": "${packages}/BeautifyRust/BeautifyRust.sublime-settings"
+                  "file": "${packages}/DartFormat/DartFormat.sublime-settings"
                 },
                 "caption": "Settings – Default"
               },
               {
                 "command": "open_file",
                 "args": {
-                  "file": "${packages}/User/BeautifyRust.sublime-settings"
+                  "file": "${packages}/User/DartFormat.sublime-settings"
                 },
                 "caption": "Settings - User"
-              },
-              {
-                "command": "open_file",
-                "args": {
-                  "file": "${packages}/BeautifyRust/Default (Windows).sublime-keymap",
-                  "platform": "Windows"
-                },
-                "caption": "Key Bindings – Default"
-              },
-              {
-                "command": "open_file",
-                "args": {
-                  "file": "${packages}/BeautifyRust/Default (OSX).sublime-keymap",
-                  "platform": "OSX"
-                },
-                "caption": "Key Bindings – Default"
-              },
-              {
-                "command": "open_file",
-                "args": {
-                  "file": "${packages}/BeautifyRust/Default (Linux).sublime-keymap",
-                  "platform": "Linux"
-                },
-                "caption": "Key Bindings – Default"
-              },
-              {
-                "command": "open_file",
-                "args": {
-                  "file": "${packages}/User/Default (Windows).sublime-keymap",
-                  "platform": "Windows"
-                },
-                "caption": "Key Bindings – User"
-              },
-              {
-                "command": "open_file",
-                "args": {
-                  "file": "${packages}/User/Default (OSX).sublime-keymap",
-                  "platform": "OSX"
-                },
-                "caption": "Key Bindings – User"
-              },
-              {
-                "command": "open_file",
-                "args": {
-                  "file": "${packages}/User/Default (Linux).sublime-keymap",
-                  "platform": "Linux"
-                },
-                "caption": "Key Bindings – User"
               },
               {
                 "caption": "-"
