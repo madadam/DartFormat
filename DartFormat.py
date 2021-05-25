@@ -1,21 +1,9 @@
 import os.path
-import shutil
 import sublime
 import sublime_plugin
 import subprocess
 
 SETTINGS_FILE = "DartFormat.sublime-settings"
-
-def which(program):
-    def is_exe(fpath):
-        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
-    fpath, fname = os.path.split(program)
-    if fpath:
-        if is_exe(program):
-            return program
-    else:
-        return shutil.which(program)
-
 
 class DartFormatOnSave(sublime_plugin.EventListener):
 
@@ -28,47 +16,26 @@ class DartFormatOnSave(sublime_plugin.EventListener):
 class DartFormatCommand(sublime_plugin.TextCommand):
 
     def run(self, edit):
-        self.filename = self.view.file_name()
-        self.fname = os.path.basename(self.filename)
-        self.settings = sublime.load_settings(SETTINGS_FILE)
-        if self.is_dart_file():
-            self.run_format(edit)
-
-    def is_dart_file(self):
-        return self.fname.endswith(".dart")
-
-    def pipe(self, cmd):
-        cwd = os.path.dirname(self.filename)
-        startupinfo = None
-        if os.name == 'nt':
-            startupinfo = subprocess.STARTUPINFO()
-            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        formatter = subprocess.Popen(
-            cmd, cwd=cwd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-            startupinfo=startupinfo)
-        (_, err) = formatter.communicate()
-        return (formatter.wait(), err.decode('utf8'))
-
-    def run_format(self, edit):
-        buffer_region = sublime.Region(0, self.view.size())
-        buffer_text = self.view.substr(buffer_region)
-        if buffer_text == "":
+        if not self.is_dart():
             return
-        dart_bin = which(self.settings.get("dart", "dart"))
-        if dart_bin is None:
-            return sublime.error_message(
-                "DartFormat: can not find {0} in path.".format(self.settings.get("dart", "dart")))
-        cmd_list = [dart_bin, "format"] + self.settings.get("args", []) + [self.filename]
-        self.save_viewport_state()
-        (exit_code, err) = self.pipe(cmd_list)
 
-        if exit_code != 0:
-            self.view.replace(edit, buffer_region, buffer_text)
-            print("failed: exit_code: {0}\n{1}".format(exit_code, err))
-            sublime.error_message("DartFormat: dart process call failed. See log (ctrl + `) for details.")
+        filename = self.view.file_name()
+        settings = sublime.load_settings(SETTINGS_FILE)
+        dart_bin = settings.get("dart", "dart")
+
+        cmd = [dart_bin, "format"] + settings.get("args", []) + [filename]
+        cwd = os.path.dirname(filename)
+
+        self.save_viewport_state()
+
+        proc = subprocess.Popen(cmd, cwd=cwd)
+        proc.wait()
 
         self.view.window().run_command("reload_all_files")
         self.reset_viewport_state()
+
+    def is_dart(self):
+        return 'source.dart' in self.view.scope_name(0)
 
     def save_viewport_state(self):
         self.previous_selection = [(region.a, region.b)
